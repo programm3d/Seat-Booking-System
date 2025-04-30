@@ -26,7 +26,7 @@ userRouter.post("/login", async (req, res) => {
       if (err) return res.status(500).send({ message: err.message });
       if (result) {
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
-        return res.status(200).send({ message: "Login successful", token, bookings: user.bookings});
+        return res.status(200).send({ message: "Login successful", token, user});
       } else {
         return res.status(400).send({ message: "Wrong Password" });
       }

@@ -10,8 +10,12 @@ const Home = () => {
   useEffect(() => {
     const fetchSeats = async () => {
       try {
+        const token = localStorage.getItem("jwt");
         const response = await axios.get(
-          "https://seat-booking-backendsystem.onrender.com/seats/all-seats"
+          "https://seat-booking-backendsystem.onrender.com/seat/all-seats",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
         setSeats(response.data);
       } catch (error) {
@@ -22,55 +26,60 @@ const Home = () => {
     fetchSeats();
   }, []);
 
-  const selectBestSeats = (seats, numSeats) => {
-    const availableSeats = seats.filter((seat) => seat.status === "available");
+//   const selectBestSeats = (seats, numSeats) => {
+//     const availableSeats = seats.filter((seat) => seat.status === "available");
 
-    for (let row = 1; row <= 5; row++) {
-      const rowSeats = availableSeats.filter((seat) => seat.row === row);
+//     for (let row = 1; row <= 5; row++) {
+//       const rowSeats = availableSeats.filter((seat) => seat.row === row);
 
-      for (let i = 0; i <= rowSeats.length - numSeats; i++) {
-        const possibleSeats = rowSeats.slice(i, i + numSeats);
-        if (possibleSeats.length === numSeats) {
-          return possibleSeats; // Return the closest available seats in the same row
-        }
-      }
-    }
+//       for (let i = 0; i <= rowSeats.length - numSeats; i++) {
+//         const possibleSeats = rowSeats.slice(i, i + numSeats);
+//         if (possibleSeats.length === numSeats) {
+//           return possibleSeats; // Return the closest available seats in the same row
+//         }
+//       }
+//     }
 
-    return availableSeats.slice(0, numSeats); // If perfect adjacency isn't possible, return the first available seats
-  };
+//     return availableSeats.slice(0, numSeats); // If perfect adjacency isn't possible, return the first available seats
+//   };
 
-  const bookSeats = async (event) => {
-    event.preventDefault();
-    const selectedSeats = selectBestSeats(seats, numSeats); // Find closest available seats
+//   const bookSeats = async (event) => {
+//     event.preventDefault();
+//     const selectedSeats = selectBestSeats(seats, numSeats);
 
-    if (selectedSeats.length < numSeats) {
-      alert("Not enough adjacent seats available.");
-      return;
-    }
+//     if (selectedSeats.length < numSeats) {
+//       alert("Not enough adjacent seats available.");
+//       return;
+//     }
 
-    try {
-      await axios.post(
-        "https://seat-booking-backendsystem.onrender.com/seats/book",
-        {
-          userId: user.userId,
-          seatIds: selectedSeats.map((seat) => seat._id),
-        }
-      );
+//     try {
+//       const token = localStorage.getItem("jwt");
+//       await axios.post(
+//         "https://seat-booking-backendsystem.onrender.com/seat/book",
+//         {
+//           userId: user.userId,
+//           seatIds: selectedSeats.map((seat) => seat._id),
+//         },
+//         {
+//           headers: { Authorization: `Bearer ${token}` },
+//         }
+//       );
 
-      setSeats((prevSeats) =>
-        prevSeats.map((seat) =>
-          selectedSeats.includes(seat)
-            ? { ...seat, status: "reserved", reservedBy: user.userId }
-            : seat
-        )
-      );
-    } catch (error) {
-      console.error("Error booking seats:", error);
-    }
-  };
+//       const updatedSeats = await axios.get(
+//         "https://seat-booking-backendsystem.onrender.com/seat/all-seats",
+//         {
+//           headers: { Authorization: `Bearer ${token}` },
+//         }
+//       );
+
+//       setSeats(updatedSeats.data);
+//     } catch (error) {
+//       console.error("Error booking seats:", error);
+//     }
+//   };
 
   return (
-    <div>
+    <div className="dashboard">
       <h2>Seat Booking</h2>
       <form onSubmit={bookSeats}>
         <label>How many seats?</label>
