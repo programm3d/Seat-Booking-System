@@ -3,9 +3,16 @@ const mongoose = require("mongoose");
 const userRouter = require("./Routes/user.route");
 const seatRouter = require("./Routes/seat.route");
 require("dotenv").config();
+const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+
+app.use(cors({
+  origin: "http://localhost:5173", 
+  methods: "GET,POST,PUT,DELETE",
+  credentials: true
+}));
 
 mongoose
   .connect(process.env.MONGO_URI)
