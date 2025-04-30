@@ -53,3 +53,83 @@ body {
     margin-top: 10px;
   }
   
+/* Dashboard */
+
+.dashboard {
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  color: #333;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+label {
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+input[type="number"] {
+  padding: 8px;
+  font-size: 14px;
+  width: 60px;
+}
+
+button {
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+
+.seating-layout {
+  display: grid;
+  grid-template-columns: repeat(7, 40px); /* 7 seats per row */
+  gap: 10px;
+  justify-content: center;
+}
+
+.seat {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.seat.available {
+  background-color: #28a745;
+  color: white;
+}
+
+.seat.reserved {
+  background-color: #dc3545;
+  color: white;
+}
+
+.seat.occupied {
+  background-color: #6c757d;
+  color: white;
+}
+
+.seat:hover {
+  opacity: 0.8;
+}

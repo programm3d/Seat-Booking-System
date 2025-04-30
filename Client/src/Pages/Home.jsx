@@ -26,68 +26,21 @@ const Home = () => {
     fetchSeats();
   }, []);
 
-//   const selectBestSeats = (seats, numSeats) => {
-//     const availableSeats = seats.filter((seat) => seat.status === "available");
-
-//     for (let row = 1; row <= 5; row++) {
-//       const rowSeats = availableSeats.filter((seat) => seat.row === row);
-
-//       for (let i = 0; i <= rowSeats.length - numSeats; i++) {
-//         const possibleSeats = rowSeats.slice(i, i + numSeats);
-//         if (possibleSeats.length === numSeats) {
-//           return possibleSeats; // Return the closest available seats in the same row
-//         }
-//       }
-//     }
-
-//     return availableSeats.slice(0, numSeats); // If perfect adjacency isn't possible, return the first available seats
-//   };
-
-//   const bookSeats = async (event) => {
-//     event.preventDefault();
-//     const selectedSeats = selectBestSeats(seats, numSeats);
-
-//     if (selectedSeats.length < numSeats) {
-//       alert("Not enough adjacent seats available.");
-//       return;
-//     }
-
-//     try {
-//       const token = localStorage.getItem("jwt");
-//       await axios.post(
-//         "https://seat-booking-backendsystem.onrender.com/seat/book",
-//         {
-//           userId: user.userId,
-//           seatIds: selectedSeats.map((seat) => seat._id),
-//         },
-//         {
-//           headers: { Authorization: `Bearer ${token}` },
-//         }
-//       );
-
-//       const updatedSeats = await axios.get(
-//         "https://seat-booking-backendsystem.onrender.com/seat/all-seats",
-//         {
-//           headers: { Authorization: `Bearer ${token}` },
-//         }
-//       );
-
-//       setSeats(updatedSeats.data);
-//     } catch (error) {
-//       console.error("Error booking seats:", error);
-//     }
-//   };
+  const handleNumSeatsChange = (e) => {
+    setNumSeats(Number(e.target.value));
+  };
 
   return (
     <div className="dashboard">
       <h2>Seat Booking</h2>
-      <form onSubmit={bookSeats}>
-        <label>How many seats?</label>
+      <form>
+        <label htmlFor="numSeats">How many seats?</label>
         <input
+          id="numSeats"
           type="number"
           min="1"
           value={numSeats}
-          onChange={(e) => setNumSeats(Number(e.target.value))}
+          onChange={handleNumSeatsChange}
         />
         <button type="submit">Book Seats</button>
       </form>
@@ -95,8 +48,7 @@ const Home = () => {
       <div className="seating-layout">
         {seats.map((seat) => (
           <div key={seat._id} className={`seat ${seat.status}`}>
-            {seat.seatNumber}{" "}
-            {seat.reservedBy === user.userId && "(Your Booking)"}
+            {seat.seatNumber} {seat.reservedBy === user.userId && "(Your Booking)"}
           </div>
         ))}
       </div>

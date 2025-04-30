@@ -18,7 +18,7 @@ export const UserProvider = ({ children }) => {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then(({ data }) => {
-          setUser({ token, ...data.user }); 
+          setUser({ ...data.user }); 
           setBookings(data.bookings);
           navigate("/");
         })

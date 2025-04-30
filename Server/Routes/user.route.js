@@ -1,6 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const authMiddleware = require("../Middleware/authMiddleware")
 const userModel = require("../Models/user.model");
 
 const userRouter = express.Router();
@@ -36,7 +37,7 @@ userRouter.post("/login", async (req, res) => {
   }
 });
 
-userRouter.get("/profile", async (req, res) => {
+userRouter.get("/profile", authMiddleware() , async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).send({ message: "Unauthorized" });
   try {
