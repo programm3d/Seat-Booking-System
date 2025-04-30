@@ -1,10 +1,10 @@
 const express = require("express");
 const seatModel = require("../Models/seats.model");
-const authMiddleware = require("../Middleware/authMiddleware");
+const authMiddleware = require("../Middleware/authMiddleware")
 
 const seatRouter = express.Router();
 
-seatRouter.post("/book", authMiddleware, async (req, res) => {
+seatRouter.post("/book", authMiddleware(), async (req, res) => {
   try {
     const { seatNumbers } = req.body;
     const userId = req.userId;
@@ -39,7 +39,7 @@ seatRouter.post("/book", authMiddleware, async (req, res) => {
   }
 });
 
-seatRouter.post("/reset-booking", authMiddleware, async (req, res) => {
+seatRouter.post("/reset-booking", authMiddleware(), async (req, res) => {
   try {
     const userId = req.userId;
 
@@ -65,11 +65,12 @@ seatRouter.post("/reset-booking", authMiddleware, async (req, res) => {
   }
 });
 
-seatRouter.get("/all-seats", authMiddleware, async (req, res) => {
+seatRouter.get("/all-seats",authMiddleware(),async (req, res) => {
   try {
     const seats = await seatModel.find({});
     res.status(200).json(seats);
   } catch (error) {
+    console.error("❌ Error fetching seats:", error);
     res.status(500).json({ msg: "Server error", error });
   }
 });
