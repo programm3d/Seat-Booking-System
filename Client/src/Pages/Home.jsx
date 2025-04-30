@@ -1,9 +1,98 @@
-import React from 'react'
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useUser } from "../context/userContext";
 
-function Home() {
+const Home = () => {
+  const { user } = useUser();
+  const [seats, setSeats] = useState([]);
+  const [numSeats, setNumSeats] = useState(1);
+
+  useEffect(() => {
+    const fetchSeats = async () => {
+      try {
+        const response = await axios.get(
+          "https://seat-booking-backendsystem.onrender.com/seats/all-seats"
+        );
+        setSeats(response.data);
+      } catch (error) {
+        console.error("Error fetching seats:", error);
+      }
+    };
+
+    fetchSeats();
+  }, []);
+
+  const selectBestSeats = (seats, numSeats) => {
+    const availableSeats = seats.filter((seat) => seat.status === "available");
+
+    for (let row = 1; row <= 5; row++) {
+      const rowSeats = availableSeats.filter((seat) => seat.row === row);
+
+      for (let i = 0; i <= rowSeats.length - numSeats; i++) {
+        const possibleSeats = rowSeats.slice(i, i + numSeats);
+        if (possibleSeats.length === numSeats) {
+          return possibleSeats; // Return the closest available seats in the same row
+        }
+      }
+    }
+
+    return availableSeats.slice(0, numSeats); // If perfect adjacency isn't possible, return the first available seats
+  };
+
+  const bookSeats = async (event) => {
+    event.preventDefault();
+    const selectedSeats = selectBestSeats(seats, numSeats); // Find closest available seats
+
+    if (selectedSeats.length < numSeats) {
+      alert("Not enough adjacent seats available.");
+      return;
+    }
+
+    try {
+      await axios.post(
+        "https://seat-booking-backendsystem.onrender.com/seats/book",
+        {
+          userId: user.userId,
+          seatIds: selectedSeats.map((seat) => seat._id),
+        }
+      );
+
+      setSeats((prevSeats) =>
+        prevSeats.map((seat) =>
+          selectedSeats.includes(seat)
+            ? { ...seat, status: "reserved", reservedBy: user.userId }
+            : seat
+        )
+      );
+    } catch (error) {
+      console.error("Error booking seats:", error);
+    }
+  };
+
   return (
-    <div>Home</div>
-  )
-}
+    <div>
+      <h2>Seat Booking</h2>
+      <form onSubmit={bookSeats}>
+        <label>How many seats?</label>
+        <input
+          type="number"
+          min="1"
+          value={numSeats}
+          onChange={(e) => setNumSeats(Number(e.target.value))}
+        />
+        <button type="submit">Book Seats</button>
+      </form>
 
-export default Home
+      <div className="seating-layout">
+        {seats.map((seat) => (
+          <div key={seat._id} className={`seat ${seat.status}`}>
+            {seat.seatNumber}{" "}
+            {seat.reservedBy === user.userId && "(Your Booking)"}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Home;
