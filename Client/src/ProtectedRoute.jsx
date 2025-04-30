@@ -2,9 +2,9 @@ import { Navigate } from "react-router-dom";
 import { useUser } from "./context/userContext";
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useUser();
+  const token = localStorage.getItem("jwt");
 
-  return user ? children : <Navigate to="/login" />;
+  return token ? children : <Navigate to="/login" />;
 };
 
 export default ProtectedRoute;

@@ -8,18 +8,7 @@ seatRouter.post("/book", authMiddleware(), async (req, res) => {
   try {
     const { seatNumbers } = req.body;
     const userId = req.userId;
-
-    const seats = await seatModel.find({
-      seatNumber: { $in: seatNumbers },
-      status: "available",
-    });
-
-    if (seats.length !== seatNumbers.length) {
-      return res
-        .status(400)
-        .json({ msg: "Some seats are already reserved or invalid" });
-    }
-
+    
     await seatModel.updateMany(
       { seatNumber: { $in: seatNumbers } },
       { $set: { reservedBy: userId, status: "reserved" } }
