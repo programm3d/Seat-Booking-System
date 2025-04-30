@@ -7,6 +7,7 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [bookings, setBookings] = useState([]);
+  const navigate = useNavigate();
 
   const login = async (credentials) => {
     try {
@@ -14,10 +15,14 @@ export const UserProvider = ({ children }) => {
         "https://seat-booking-backendsystem.onrender.com/user/login",
         credentials
       );
+
       if (data.token) {
         localStorage.setItem("jwt", data.token);
-        setUser(data.user);
+        const userData = { token: data.token, bookings: data.bookings };
+        setUser(userData);
         setBookings(data.bookings);
+        console.log(data, user);
+        navigate("/"); 
       }
     } catch (error) {
       console.error("Login error:", error.response?.data || error.message);
@@ -30,11 +35,8 @@ export const UserProvider = ({ children }) => {
         "https://seat-booking-backendsystem.onrender.com/user/sign-up",
         userInfo
       );
-      if (data.token) {
-        localStorage.setItem("jwt", data.token);
-        setUser(data.user);
-        setBookings(data.bookings);
-        console.log(data);
+      if (data) {
+        navigate("/login");
       }
     } catch (error) {
       console.error("Signup error:", error.response?.data || error.message);

@@ -1,35 +1,23 @@
 import "./App.css";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./Pages/Home";
 import Login from "./Pages/Login";
 import SignUp from "./Pages/SignUp";
-import { useUser } from "./context/userContext";
+import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
-  const { user } = useUser(); // Get authentication state
-
   return (
     <Routes>
-      {/* Redirect to Home if user is logged in, otherwise go to Login */}
-      <Route path="/" element={<Navigate to={user ? "/home" : "/login"} />} />
-
       <Route
-        path="/login"
-        element={user ? <Navigate to="/home" /> : <Login />}
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        }
       />
-      <Route
-        path="/signup"
-        element={user ? <Navigate to="/home" /> : <SignUp />}
-      />
-      <Route
-        path="/home"
-        element={user ? <Home /> : <Navigate to="/login" />}
-      />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
     </Routes>
   );
 }

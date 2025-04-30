@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../context/userContext";
 import "../App.css";
 
@@ -41,7 +42,9 @@ const SignUp = () => {
         />
         <button type="submit">Sign Up</button>
       </form>
-      <p>Already have an account? Please <Link to="/login">Login</Link>.</p>
+      <p>
+        Already have an account? Please <Link to="/login">Login</Link>.
+      </p>
     </div>
   );
 };

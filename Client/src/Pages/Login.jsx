@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useUser } from "../context/userContext";
-import {Link} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../App.css";
 
 const Login = () => {
@@ -34,7 +34,9 @@ const Login = () => {
         />
         <button type="submit">Login</button>
       </form>
-      <p>No account? Please <Link to="/signup">Sign-Up</Link>.</p>
+      <p>
+        No account? Please <Link to="/signup">Sign-Up</Link>.
+      </p>
     </div>
   );
 };

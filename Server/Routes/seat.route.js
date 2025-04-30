@@ -65,4 +65,13 @@ seatRouter.post("/reset-booking", authMiddleware, async (req, res) => {
   }
 });
 
+seatRouter.get("/all-seats", authMiddleware, async (req, res) => {
+  try {
+    const seats = await seatModel.find({});
+    res.status(200).json(seats);
+  } catch (error) {
+    res.status(500).json({ msg: "Server error", error });
+  }
+});
+
 module.exports = seatRouter;

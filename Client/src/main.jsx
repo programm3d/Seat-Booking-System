@@ -5,9 +5,9 @@ import App from "./App.jsx";
 import { UserProvider } from "./context/userContext.jsx";
 
 createRoot(document.getElementById("root")).render(
-  <UserProvider>
-    <BrowserRouter>
+  <BrowserRouter>
+    <UserProvider>
       <App />
-    </BrowserRouter>
-  </UserProvider>
+    </UserProvider>
+  </BrowserRouter>
 );
