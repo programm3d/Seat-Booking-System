@@ -4,7 +4,7 @@ import { useUser } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const { user } = useUser();
+  const { user, logout } = useUser();
   const [seats, setSeats] = useState([]);
   const [numSeats, setNumSeats] = useState(1);
 
@@ -79,6 +79,27 @@ const Home = () => {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+  };
+  const handleReset = async () => {
+    try {
+      const token = localStorage.getItem("jwt");
+      await axios.post(
+        "https://seat-booking-backendsystem.onrender.com/seat/reset-booking",
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      alert("All bookings have been reset successfully.");
+      fetchSeats();
+    } catch (error) {
+      console.error("Error resetting bookings:", error);
+      alert("Failed to reset bookings.");
+    }
+  };
+
   return (
     <div className="dashboard">
       <h2>Seat Booking</h2>
@@ -103,6 +124,10 @@ const Home = () => {
           </div>
         ))}
       </div>
+      <footer>
+        <button onClick={handleLogout}>LogOut</button>
+        <button onClick={handleReset}>Reset Bookings</button>
+      </footer>
     </div>
   );
 };
