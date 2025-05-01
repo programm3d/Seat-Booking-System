@@ -130,3 +130,9 @@ Contributions are welcome! Please follow these steps:
 5.  Open a pull request.
 
 Please ensure your code follows the project's coding style and includes appropriate tests.
+
+## Deployed Links
+
+* [Backend](https://seat-booking-backendsystem.onrender.com)  ( Deployed on Render.com )
+* [Frontend](https://tranquil-boba-425d35.netlify.app/) ( Deployed on  )
+
