@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useUser } from "../context/userContext";
-import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const { user, logout } = useUser();
@@ -27,25 +26,68 @@ const Home = () => {
     }
   };
 
-  const getBestSeats = (seats, n) => {
-    // Step 1: Filter and sort available seats row-wise and left to right
-    const availableSeats = seats
-      .filter((seat) => seat.status === "available")
-      .sort((a, b) => {
-        if (a.row === b.row) {
-          return a.seatNumber - b.seatNumber;
+  function getBestSeats(seats, numRequested) {
+    const rows = {};
+    for (let seat of seats) {
+      if (seat.status === "available") {
+        if (!rows[seat.row]) {
+          rows[seat.row] = [];
         }
-        return a.row - b.row;
-      });
-
-    const selectedSeats = [];
-    for (let seat of availableSeats) {
-      selectedSeats.push(seat.seatNumber);
-      if (selectedSeats.length === n) break;
+        rows[seat.row].push(seat);
+      }
     }
 
-    return selectedSeats;
-  };
+    Object.keys(rows).forEach((rowNum) => {
+      rows[rowNum].sort((a, b) => a.seatNumber - b.seatNumber);
+    });
+
+    for (let rowNum of Object.keys(rows).sort((a, b) => a - b)) {
+      const availableSeats = rows[rowNum];
+      let start = 0;
+
+      while (start <= availableSeats.length - numRequested) {
+        const block = availableSeats.slice(start, start + numRequested);
+        const isContiguous = block.every((seat, i) => {
+          if (i === 0) return true;
+          return seat.seatNumber === block[i - 1].seatNumber + 1;
+        });
+
+        if (isContiguous) {
+          return block.map((s) => s.seatNumber);
+        }
+
+        start++;
+      }
+    }
+
+    let bestSeats = [];
+    for (let rowNum of Object.keys(rows).sort((a, b) => a - b)) {
+      const availableSeats = rows[rowNum];
+      let start = 0;
+
+      while (start < availableSeats.length && bestSeats.length < numRequested) {
+        let tempBlock = [availableSeats[start]];
+        let i = start + 1;
+
+        while (
+          i < availableSeats.length &&
+          availableSeats[i].seatNumber ===
+            availableSeats[i - 1].seatNumber + 1 &&
+          tempBlock.length < numRequested - bestSeats.length
+        ) {
+          tempBlock.push(availableSeats[i]);
+          i++;
+        }
+
+        bestSeats.push(...tempBlock);
+        start = i;
+      }
+
+      if (bestSeats.length >= numRequested) break;
+    }
+
+    return bestSeats.map((s) => s.seatNumber);
+  }
 
   const handleNumSeatsChange = (e) => {
     setNumSeats(Number(e.target.value));
@@ -103,7 +145,7 @@ const Home = () => {
   return (
     <div className="dashboard">
       <h2>Seat Booking</h2>
-      {user && <p>Welcome, {user.name}!</p>}
+
       <form onSubmit={handleBooking}>
         <label htmlFor="numSeats">How many seats?</label>
         <input
